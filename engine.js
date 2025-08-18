@@ -473,8 +473,8 @@ class ChineseVocabGame {
             this.speechSynthesis.cancel();
         }
         
-        // ピンイン音声合成
-        const utterance = new SpeechSynthesisUtterance(this.currentQuestion.pinyin);
+        // 中国語音声合成（中国語の文字を読み上げ）
+        const utterance = new SpeechSynthesisUtterance(this.currentQuestion.chinese);
         utterance.lang = 'zh-CN';
         utterance.rate = 0.8;
         utterance.pitch = 1;
