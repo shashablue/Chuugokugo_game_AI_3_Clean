@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>推しと学ぶ中国語</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- スタート画面 -->
+        <div id="start-screen" class="screen">
+            <div class="start-content">
+                <h1 class="game-title">推しと学ぶ中国語</h1>
+                <p class="game-subtitle">HSK1級〜3級で中国語をマスターしよう！</p>
+            </div>
+            <div class="level-selection">
+                <h3>レベルを選択してください</h3>
+                <div class="level-buttons">
+                    <div class="level-set">
+                        <div class="set-title">HSK1級: 基礎語彙</div>
+                        <div class="set-buttons">
+                            <button id="level1-btn" class="level-select-btn" data-level="1">
+                                <div class="level-title">文字問題</div>
+                                <div class="level-desc">文字を見て答える</div>
+                                <div class="level-count">5問</div>
+                            </button>
+                            <button id="level2-btn" class="level-select-btn" data-level="2">
+                                <div class="level-title">音声問題</div>
+                                <div class="level-desc">音声を聞いて答える</div>
+                                <div class="level-count">5問</div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="level-set">
+                        <div class="set-title">HSK2級: 初級語彙</div>
+                        <div class="set-buttons">
+                            <button id="level3-btn" class="level-select-btn" data-level="3">
+                                <div class="level-title">文字問題</div>
+                                <div class="level-desc">文字を見て答える</div>
+                                <div class="level-count">5問</div>
+                            </button>
+                            <button id="level4-btn" class="level-select-btn" data-level="4">
+                                <div class="level-title">音声問題</div>
+                                <div class="level-desc">音声を聞いて答える</div>
+                                <div class="level-count">5問</div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="level-set">
+                        <div class="set-title">HSK3級: 初中級語彙</div>
+                        <div class="set-buttons">
+                            <button id="level5-btn" class="level-select-btn" data-level="5">
+                                <div class="level-title">文字問題</div>
+                                <div class="level-desc">文字を見て答える</div>
+                                <div class="level-count">5問</div>
+                            </button>
+                            <button id="level6-btn" class="level-select-btn" data-level="6">
+                                <div class="level-title">音声問題</div>
+                                <div class="level-desc">音声を聞いて答える</div>
+                                <div class="level-count">5問</div>
+                            </button>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+
+        <!-- ゲーム画面 -->
+        <div id="game-screen" class="screen" style="display: none;">
+            <!-- ヘッダー情報 -->
+            <div class="game-header">
+                <div class="header-left">
+                    <button id="back-to-home-btn" class="back-btn">← ホームに戻る</button>
+                </div>
+                <div class="level-info">
+                    <span id="current-level">レベル1</span>
+                    <span class="progress">問題 <span id="progress-indicator">1/3</span></span>
+                </div>
+                <div class="score-info">
+                    正解数: <span id="correct-count">0</span>
+                </div>
+            </div>
+
+            <!-- 問題エリア（上部） -->
+            <div class="question-section">
+                <div class="question-area">
+                    <!-- 文字問題用 -->
+                    <div id="text-question" class="question-display">
+                        <div id="chinese-text" class="chinese-text">你好</div>
+                        <div id="pinyin-text" class="pinyin-text">nǐ hǎo</div>
+                    </div>
+
+                    <!-- 音声問題用 -->
+                    <div id="audio-question" class="question-display" style="display: none;">
+                        <div class="audio-player">
+                            <button id="play-audio-btn" class="audio-button">🔊 もう一度聞く</button>
+                            <div class="audio-hint">音声を聞いて答えを選んでください</div>
+                            <div class="auto-play-indicator">自動再生中...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 選択肢エリア（下部） -->
+            <div class="choices-section">
+                <div class="choices-area">
+                    <div class="choices-grid">
+                        <button class="choice-btn">こんにちは</button>
+                        <button class="choice-btn">ありがとう</button>
+                        <button class="choice-btn">さようなら</button>
+                        <button class="choice-btn">すみません</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- フィードバックエリア -->
+            <div class="feedback-area">
+                <div id="feedback-message" class="feedback-message"></div>
+                <div id="audio-answer-display" class="audio-answer-display" style="display: none;">
+                    <div class="audio-answer-chinese" id="audio-answer-chinese"></div>
+                    <div class="audio-answer-pinyin" id="audio-answer-pinyin"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 結果画面 -->
+        <div id="result-screen" class="screen" style="display: none;">
+            <div class="result-content">
+                <h2 id="result-title">レベル1 最終結果</h2>
+                
+                <div id="praise-section" class="praise-section">
+                    <div class="praise-message">
+                        <span id="praise-chinese">加油！</span>
+                        <span id="praise-japanese">頑張って！</span>
+                    </div>
+                    <div class="reward-image-container">
+                        <img id="reward-image" src="" alt="結果画像" class="reward-image">
+                    </div>
+                </div>
+
+                <div class="score-summary">
+                    <div class="score-percentage">
+                        <span id="score-percent">67</span>%
+                    </div>
+                </div>
+
+                <div class="result-actions">
+                    <button id="retry-btn" class="main-button">もう一度</button>
+                    <button id="next-set-btn" class="main-button">次の5問へ</button>
+                    <button id="pair-level-btn" class="secondary-button" style="display: none;">ペアレベル</button>
+                    <button id="other-level-btn" class="secondary-button">他のレベル</button>
+                    <button id="home-btn" class="secondary-button">ホームに戻る</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/words/hsk_vocabulary.js"></script>
+    <script src="rules.js"></script>
+    <script src="engine.js"></script>
+</body>
+</html> 

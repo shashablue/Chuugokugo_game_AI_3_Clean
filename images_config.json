@@ -1,0 +1,50 @@
+{
+  "description": "画像ファイル設定 - 正解数に応じた画像表示システム",
+  "images0": [
+    "01.png",
+    "02.png", 
+    "03.png",
+    "04.png",
+    "05.png"
+  ],
+  "images20": [
+    "01_mosaic_20.png",
+    "02_mosaic_20.png",
+    "03_mosaic_20.png",
+    "04_mosaic_20.png",
+    "05_mosaic_20.png"
+  ],
+  "images50": [
+    "01_mosaic_50.png",
+    "02_mosaic_50.png",
+    "03_mosaic_50.png",
+    "04_mosaic_50.png",
+    "05_mosaic_50.png"
+  ],
+  "images70": [
+    "01_mosaic_70.png",
+    "02_mosaic_70.png",
+    "03_mosaic_70.png",
+    "04_mosaic_70.png",
+    "05_mosaic_70.png"
+  ],
+  "images100": [
+    "01_mosaic_100.png",
+    "02_mosaic_100.png",
+    "03_mosaic_100.png",
+    "04_mosaic_100.png",
+    "05_mosaic_100.png"
+  ],
+  "auto_detect": {
+    "enabled": true,
+    "description": "trueの場合、設定ファイルに加えて自動検出も実行します"
+  },
+  "image_display_rules": {
+    "description": "正解数に応じた画像表示ルール",
+    "5_correct": "images0 - クリアな画像（5問正解）",
+    "4_correct": "images20 - 軽いモザイク（4問正解）",
+    "3_correct": "images50 - 中程度のモザイク（3問正解）",
+    "2_correct": "images70 - 強いモザイク（2問正解）",
+    "1_or_0_correct": "images100 - 最も強いモザイク（1問以下）"
+  }
+} 

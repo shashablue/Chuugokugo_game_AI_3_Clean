@@ -1,0 +1,983 @@
+/* 中国語学習ゲーム - パステル寒色系デザイン */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+    font-size: 16px;
+    background: #F0F8FF;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(135, 206, 235, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(221, 160, 221, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(176, 224, 230, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.game-container {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(135, 206, 235, 0.4);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 
+        0 25px 50px rgba(135, 206, 235, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    max-width: 700px;
+    width: 100%;
+    min-height: 650px;
+    position: relative;
+    z-index: 1;
+}
+
+.game-container::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: #87CEEB;
+    border-radius: 26px;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+/* 画面切り替え */
+.screen {
+    animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes fadeInUp {
+    from { 
+        opacity: 0; 
+        transform: translateY(30px) scale(0.95);
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* スタート画面 */
+.game-header {
+    text-align: center;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.game-title {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+    color: #2F4F4F;
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-shadow: 
+        2px 2px 4px rgba(135, 206, 235, 0.3),
+        0 0 10px rgba(221, 160, 221, 0.4);
+    letter-spacing: 2px;
+    position: relative;
+}
+
+.game-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: #87CEEB;
+    border-radius: 2px;
+}
+
+.game-subtitle {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 18px;
+    color: #708090;
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+/* レベル選択 */
+.level-selection {
+    text-align: center;
+}
+
+.level-selection h3 {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 20px;
+    color: #2F4F4F;
+    margin-bottom: 35px;
+    font-weight: 400;
+    letter-spacing: 1px;
+}
+
+.level-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+    align-items: center;
+}
+
+/* セット制レイアウト */
+.level-set {
+    width: 100%;
+    max-width: 600px;
+}
+
+.set-title {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+    font-size: 18px;
+    color: #4682B4;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: 500;
+    letter-spacing: 1px;
+    position: relative;
+}
+
+.set-title::before {
+    content: '◆';
+    margin-right: 8px;
+    color: #DDA0DD;
+}
+
+.set-title::after {
+    content: '◆';
+    margin-left: 8px;
+    color: #DDA0DD;
+}
+
+.set-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.level-select-btn {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    background: #87CEEB;
+    border: 2px solid rgba(221, 160, 221, 0.5);
+    border-radius: 16px;
+    padding: 24px 20px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    width: 200px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.level-select-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(221, 160, 221, 0.3);
+    transition: left 0.5s;
+}
+
+.level-select-btn:hover::before {
+    left: 100%;
+}
+
+.level-select-btn:hover {
+    background: #5F9EA0;
+    border-color: #DDA0DD;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 
+        0 15px 30px rgba(135, 206, 235, 0.4),
+        0 0 0 1px rgba(221, 160, 221, 0.3);
+}
+
+.level-select-btn:active {
+    transform: translateY(-1px) scale(0.98);
+}
+
+.level-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+}
+
+.level-desc {
+    font-size: 13px;
+    margin-bottom: 12px;
+    line-height: 1.4;
+    opacity: 0.9;
+    font-weight: 300;
+}
+
+.level-count {
+    background: rgba(221, 160, 221, 0.2);
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
+    border: 1px solid rgba(221, 160, 221, 0.4);
+}
+
+/* ボタンスタイル */
+.main-button {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 16px 32px;
+    background: #87CEEB;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: block;
+    margin: 0 auto;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.main-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #DDA0DD;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.main-button:hover::before {
+    opacity: 0.2;
+}
+
+.main-button:hover {
+    background: #5F9EA0;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(135, 206, 235, 0.4);
+}
+
+.main-button:active {
+    transform: translateY(0);
+}
+
+.secondary-button {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    padding: 12px 24px;
+    background: rgba(176, 224, 230, 0.2);
+    border: 2px solid rgba(176, 224, 230, 0.4);
+    border-radius: 10px;
+    color: #4682B4;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 8px 6px;
+    letter-spacing: 0.5px;
+}
+
+.secondary-button:hover {
+    background: rgba(176, 224, 230, 0.3);
+    border-color: #4682B4;
+    transform: translateY(-1px);
+}
+
+/* ゲーム画面 */
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding: 15px 20px;
+    background: rgba(135, 206, 235, 0.1);
+    border-radius: 15px;
+    border: 1px solid rgba(135, 206, 235, 0.3);
+}
+
+.back-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.level-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+#current-level {
+    font-size: 18px;
+    font-weight: 600;
+    color: #4682B4;
+}
+
+.progress {
+    font-size: 14px;
+    color: #708090;
+}
+
+.score-info {
+    font-size: 16px;
+    color: #4682B4;
+    font-weight: 500;
+}
+
+/* 問題セクション（上部） */
+.question-section {
+    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 200px;
+}
+
+.question-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 問題表示エリア */
+.question-display {
+    padding: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(135, 206, 235, 0.3);
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(135, 206, 235, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+.question-display::before {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    right: -1px;
+    bottom: -1px;
+    background: #87CEEB;
+    border-radius: 20px;
+    z-index: -1;
+    opacity: 0.2;
+}
+
+.chinese-word {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+#chinese-text {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+    font-size: 56px;
+    font-weight: 700;
+    color: #4682B4;
+    text-shadow: 
+        2px 2px 4px rgba(135, 206, 235, 0.2),
+        0 0 15px rgba(221, 160, 221, 0.3);
+    letter-spacing: 2px;
+}
+
+.pinyin-text {
+    font-size: 16px;
+    color: #708090;
+    font-style: italic;
+    margin-top: 8px;
+    opacity: 0.8;
+}
+
+/* 音声問題用 */
+.audio-player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.audio-button {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 18px 28px;
+    background: #6495ED;
+    border: 2px solid rgba(221, 160, 221, 0.4);
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+}
+
+.audio-button::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(221, 160, 221, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.3s ease;
+}
+
+.audio-button:hover::before {
+    width: 200px;
+    height: 200px;
+}
+
+.audio-button:hover {
+    background: #4169E1;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 15px 30px rgba(100, 149, 237, 0.4);
+}
+
+.audio-hint {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 14px;
+    color: #708090;
+    font-weight: 300;
+}
+
+.auto-play-indicator {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 12px;
+    color: #6495ED;
+    background: rgba(100, 149, 237, 0.1);
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(100, 149, 237, 0.2);
+    animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+    from { 
+        box-shadow: 0 0 5px rgba(100, 149, 237, 0.3); 
+        background: rgba(100, 149, 237, 0.1);
+    }
+    to { 
+        box-shadow: 0 0 20px rgba(100, 149, 237, 0.6); 
+        background: rgba(100, 149, 237, 0.2);
+    }
+}
+
+/* 選択肢セクション（下部） */
+.choices-section {
+    margin-top: auto;
+    padding-top: 20px;
+}
+
+.choices-area {
+    display: flex;
+    justify-content: center;
+}
+
+/* 選択肢 */
+.choices-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    width: 100%;
+    max-width: 600px;
+}
+
+.choice-btn {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 20px 16px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(135, 206, 235, 0.4);
+    border-radius: 15px;
+    color: #2F4F4F;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 20px rgba(135, 206, 235, 0.1);
+    letter-spacing: 0.5px;
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.4;
+}
+
+.choice-btn:hover {
+    background: rgba(135, 206, 235, 0.2);
+    border-color: rgba(135, 206, 235, 0.6);
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(135, 206, 235, 0.2);
+}
+
+.choice-btn:active {
+    transform: translateY(-1px);
+}
+
+.choice-btn.correct {
+    background: rgba(144, 238, 144, 0.9);
+    border-color: #32CD32;
+    color: #006400;
+    animation: correctPulse 0.6s ease;
+}
+
+.choice-btn.incorrect {
+    background: rgba(255, 182, 193, 0.9);
+    border-color: #FF6B6B;
+    color: #8B0000;
+    animation: incorrectShake 0.6s ease;
+}
+
+.choice-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+@keyframes correctPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(144, 238, 144, 0.8); }
+    100% { transform: scale(1); }
+}
+
+@keyframes incorrectShake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+/* フィードバックエリア */
+.feedback-area {
+    margin-top: 20px;
+    text-align: center;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.feedback-message {
+    font-size: 16px;
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.feedback-message.correct {
+    background: rgba(144, 238, 144, 0.2);
+    color: #006400;
+    border: 1px solid rgba(144, 238, 144, 0.5);
+}
+
+.feedback-message.incorrect {
+    background: rgba(255, 182, 193, 0.2);
+    color: #8B0000;
+    border: 1px solid rgba(255, 182, 193, 0.5);
+}
+
+.audio-answer-display {
+    background: rgba(135, 206, 235, 0.1);
+    border: 2px solid rgba(135, 206, 235, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 15px;
+    text-align: center;
+}
+
+.audio-answer-chinese {
+    font-size: 32px;
+    font-weight: bold;
+    color: #2F4F4F;
+    margin-bottom: 10px;
+    font-family: 'SimSun', 'MS Gothic', serif;
+}
+
+.audio-answer-pinyin {
+    font-size: 18px;
+    color: #1976d2;
+    font-style: italic;
+    font-weight: 500;
+}
+
+/* 結果画面 */
+.result-content {
+    text-align: center;
+}
+
+.result-content h2 {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+    font-size: 24px;
+    color: #2F4F4F;
+    margin-bottom: 35px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* 褒め言葉セクション - 画像を上に配置 */
+.praise-section {
+    margin: 0 0 40px 0;
+    padding: 30px;
+    background: rgba(221, 160, 221, 0.1);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(221, 160, 221, 0.3);
+    border-radius: 20px;
+    animation: celebration 1.2s ease-in-out;
+    position: relative;
+}
+
+.praise-section::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: #DDA0DD;
+    border-radius: 22px;
+    z-index: -1;
+    opacity: 0.3;
+}
+
+@keyframes celebration {
+    0% { transform: scale(0.9) rotateY(-10deg); opacity: 0; }
+    50% { transform: scale(1.05) rotateY(5deg); }
+    100% { transform: scale(1) rotateY(0deg); opacity: 1; }
+}
+
+.praise-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+#praise-chinese {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: #4682B4;
+    text-shadow: 2px 2px 4px rgba(135, 206, 235, 0.2);
+    letter-spacing: 1px;
+}
+
+#praise-japanese {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 18px;
+    color: #708090;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+}
+
+.reward-image-container {
+    display: flex;
+    justify-content: center;
+}
+
+.reward-image {
+    max-width: 400px;
+    max-height: 400px;
+    width: auto;
+    height: auto;
+    border: 4px solid rgba(135, 206, 235, 0.4);
+    border-radius: 20px;
+    object-fit: contain;
+    box-shadow: 
+        0 20px 40px rgba(135, 206, 235, 0.3),
+        0 0 0 1px rgba(255, 255, 255, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.reward-image:hover {
+    transform: scale(1.02);
+}
+
+/* スコア表示 - パーセンテージのみ */
+.score-summary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 35px;
+    padding: 25px;
+    background: rgba(135, 206, 235, 0.1);
+    border-radius: 20px;
+    border: 2px solid rgba(135, 206, 235, 0.2);
+}
+
+.score-percentage {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 56px;
+    font-weight: 700;
+    color: #4682B4;
+    text-shadow: 2px 2px 4px rgba(135, 206, 235, 0.2);
+}
+
+/* 結果アクション */
+.result-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+}
+
+/* 最終完了画面 */
+.complete-content {
+    text-align: center;
+}
+
+.complete-content h2 {
+    font-size: 16px;
+    color: #2d3436;
+    margin-bottom: 20px;
+}
+
+.final-stats {
+    margin: 20px 0;
+    padding: 15px;
+    background: #ddd;
+    border: 2px solid #2d3436;
+    border-radius: 10px;
+}
+
+.final-stats p {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 12px;
+    margin: 5px 0;
+    color: #2d3436;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 800px) {
+    .game-container {
+        padding: 30px;
+        margin: 15px;
+        max-width: 600px;
+    }
+    
+    .game-title {
+        font-size: 28px;
+    }
+    
+    .game-header {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+        padding: 15px;
+    }
+    
+    .level-info, .score-info {
+        align-items: center;
+    }
+    
+    /* 問題セクション（上部） */
+    .question-section {
+        min-height: 150px;
+        margin-bottom: 30px;
+    }
+    
+    .question-display {
+        padding: 30px 20px;
+        max-width: 100%;
+    }
+    
+    #chinese-text {
+        font-size: 42px;
+    }
+    
+    /* 選択肢セクション（下部） */
+    .choices-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        max-width: 100%;
+    }
+    
+    .choice-btn {
+        padding: 16px 12px;
+        font-size: 15px;
+        min-height: 60px;
+    }
+    
+    .set-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .level-select-btn {
+        width: 250px;
+    }
+    
+    /* 結果画面のレスポンシブ調整 */
+    .reward-image {
+        max-width: 300px;
+        max-height: 350px;
+    }
+    
+    #praise-chinese {
+        font-size: 28px;
+    }
+    
+    #praise-japanese {
+        font-size: 16px;
+    }
+    
+    .score-summary {
+        padding: 20px;
+    }
+    
+    .score-percentage {
+        font-size: 48px;
+    }
+}
+
+@media (max-width: 500px) {
+    .game-container {
+        padding: 20px;
+        min-height: 580px;
+    }
+    
+    .game-header {
+        padding: 12px;
+        margin-bottom: 20px;
+    }
+    
+    /* 問題セクション調整 */
+    .question-section {
+        min-height: 120px;
+        margin-bottom: 25px;
+    }
+    
+    .question-display {
+        padding: 25px 15px;
+    }
+    
+    #chinese-text {
+        font-size: 36px;
+    }
+    
+    .pinyin-text {
+        font-size: 14px;
+    }
+    
+    /* 音声問題調整 */
+    .audio-button {
+        padding: 15px 20px;
+        font-size: 14px;
+    }
+    
+    /* 選択肢調整 */
+    .choices-section {
+        padding-top: 15px;
+    }
+    
+    .choice-btn {
+        padding: 14px 10px;
+        font-size: 14px;
+        min-height: 55px;
+    }
+    
+    /* フィードバック調整 */
+    .feedback-area {
+        margin-top: 15px;
+        min-height: 35px;
+    }
+    
+    .feedback-message {
+        font-size: 14px;
+        padding: 10px 15px;
+    }
+    
+    /* レベル選択ボタン */
+    .level-select-btn {
+        width: 220px;
+        padding: 20px 16px;
+    }
+    
+    .level-title {
+        font-size: 14px;
+    }
+    
+    .level-desc {
+        font-size: 12px;
+    }
+    
+    .level-count {
+        font-size: 11px;
+    }
+    
+    .game-title {
+        font-size: 24px;
+    }
+    
+    /* 小画面での結果画面調整 */
+    .praise-section {
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+    
+    .reward-image {
+        max-width: 280px;
+        max-height: 320px;
+    }
+    
+    #praise-chinese {
+        font-size: 24px;
+    }
+    
+    #praise-japanese {
+        font-size: 14px;
+    }
+    
+    .score-summary {
+        padding: 15px;
+    }
+    
+    .score-percentage {
+        font-size: 42px;
+    }
+} 
