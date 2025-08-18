@@ -39,21 +39,22 @@ HSK1級〜3級に完全対応した中国語学習ゲームです。600語の豊
 ## 🗂️ ファイル構成
 
 ```
-Chuugokugo_game_AIのコピー/
+Chuugokugo_game_AI_3_Clean/
 ├── index.html                 # メインゲーム画面
 ├── style.css                  # スタイルシート  
 ├── rules.js                   # ゲームルール設定（HSK1-3級）
-├── engine.js                  # ゲームエンジン（正解数ベース画像表示対応）
+├── engine.js                  # ゲームエンジン（音声合成・画像表示対応）
 ├── images_config.json         # 画像ファイル設定
 ├── assets/
 │   └── words/
 │       └── hsk_vocabulary.js  # HSK1-3級語彙データ（600語）
+├── tools/
+│   └── vocabulary_builder.py  # 語彙データ構築ツール
 ├── images0/                   # 5問正解時のクリア画像
 ├── images20/                  # 4問正解時の軽いモザイク画像
 ├── images50/                  # 3問正解時の中程度モザイク画像
 ├── images70/                  # 2問正解時の強いモザイク画像
 ├── images100/                 # 1問以下の最も強いモザイク画像
-├── test_hsk.html             # 語彙データ確認ページ
 └── README.md                  # このファイル
 ```
 
@@ -109,7 +110,7 @@ Chuugokugo_game_AIのコピー/
 - レベル3（HSK2級文字）→ レベル4（HSK2級音声）
 - レベル5（HSK3級文字）→ レベル6（HSK3級音声）
 
-## 💡 新機能詳細
+## 💡 機能詳細
 
 ### 🎨 正解数ベース画像表示システム
 - **5段階のモザイクレベル**で学習成果を視覚化
@@ -183,6 +184,10 @@ Chuugokugo_game_AIのコピー/
 - **音効果生成**: Web Audio APIによるリアルタイム生成
 - **音声問題**: 中国語の文字を実際の発音で読み上げ
 
+### 開発ツール
+- **vocabulary_builder.py**: 語彙データの構築・管理ツール
+- **images_config.json**: 画像ファイルの設定管理
+
 ## 📝 今後の可能性
 
 ### 学習機能拡張
@@ -206,6 +211,17 @@ Chuugokugo_game_AIのコピー/
 - **Chrome/Safari等のモダンブラウザ**推奨
 - **スマートフォン対応**済み
 - **画像ファイル**は各フォルダに適切に配置してください
+
+## 🛠️ 開発・カスタマイズ
+
+### 語彙データの追加・編集
+`tools/vocabulary_builder.py`を使用して語彙データを管理できます。
+
+### 画像の追加・変更
+各`images*`フォルダに画像ファイルを配置し、`images_config.json`で設定を管理します。
+
+### 音声設定の調整
+`engine.js`の`playAudio()`関数で音声合成の設定を調整できます。
 
 ---
 
