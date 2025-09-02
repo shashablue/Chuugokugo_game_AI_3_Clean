@@ -349,6 +349,7 @@ class ChineseVocabGame {
         
         // デバッグ: 問題が正しく読み込まれているか確認
         console.log(`=== 問題読み込みデバッグ ===`);
+        console.log(`復習モード: ${this.gameState.isReviewMode}`);
         console.log(`現在の問題番号: ${this.gameState.currentQuestion}`);
         console.log(`問題オブジェクト:`, question);
         console.log(`問題数: ${this.gameState.questions.length}`);
@@ -392,8 +393,12 @@ class ChineseVocabGame {
             this.showAudioQuestion(question);
         }
         
-        // 選択肢生成
-        this.generateChoices(question);
+        // 選択肢生成（復習モードの場合は保存された選択肢を使用）
+        if (this.gameState.isReviewMode && question.reviewItem && question.reviewItem.choices) {
+            this.generateReviewChoices(question.reviewItem.choices, question.japanese);
+        } else {
+            this.generateChoices(question);
+        }
         
         // 現在の質問を保存
         this.currentQuestion = question;
@@ -497,11 +502,46 @@ class ChineseVocabGame {
         console.log('=== デバッグ終了 ===\n');
     }
     
+    generateReviewChoices(savedChoices, correctAnswer) {
+        console.log('=== 復習選択肢生成デバッグ ===');
+        console.log('保存された選択肢:', savedChoices);
+        console.log('正解:', correctAnswer);
+        
+        // 保存された選択肢をシャッフル
+        const shuffledChoices = [...savedChoices].sort(() => 0.5 - Math.random());
+        console.log('シャッフル後の選択肢:', shuffledChoices);
+        
+        // 正解のインデックスを記録
+        this.correctIndex = shuffledChoices.indexOf(correctAnswer);
+        console.log('正解インデックス:', this.correctIndex);
+        
+        // 正解インデックスが見つからない場合の警告
+        if (this.correctIndex === -1) {
+            console.error('正解が選択肢に含まれていません!');
+            console.error('正解:', correctAnswer);
+            console.error('選択肢:', shuffledChoices);
+            // フォールバック: 正解を最初に配置
+            shuffledChoices[0] = correctAnswer;
+            this.correctIndex = 0;
+        }
+        
+        // 選択肢をボタンに設定
+        this.elements.choiceBtns.forEach((btn, index) => {
+            btn.textContent = shuffledChoices[index] || `選択肢${index + 1}`;
+            btn.className = 'choice-btn'; // クラスリセット
+            btn.disabled = false;
+        });
+        
+        console.log('=== 復習選択肢デバッグ終了 ===\n');
+    }
+    
     selectAnswer(selectedIndex) {
         console.log(`=== 回答選択デバッグ ===`);
+        console.log(`復習モード: ${this.gameState.isReviewMode}`);
         console.log(`選択されたインデックス: ${selectedIndex}`);
         console.log(`正解インデックス: ${this.correctIndex}`);
         console.log(`ゲームアクティブ: ${this.gameState.isGameActive}`);
+        console.log(`現在の問題:`, this.currentQuestion);
         
         if (!this.gameState.isGameActive) {
             console.log('ゲームがアクティブではありません');
@@ -536,18 +576,22 @@ class ChineseVocabGame {
         } else {
             this.showFeedback('残念...', 'incorrect');
             this.playIncorrectSound();
-            // 不正解時に復習登録
-            const levelConfig = gameRules.settings.levels[this.gameState.selectedLevel];
-            this.reviewStore.add(
-                this.currentQuestion, 
-                Array.from(this.elements.choiceBtns).map(btn => btn.textContent), 
-                this.currentQuestion.japanese,
-                { 
-                    level: this.gameState.selectedLevel, 
-                    type: 'wrong',
-                    questionType: levelConfig.type // 文字問題か音声問題かを保存
-                }
-            );
+            // 不正解時に復習登録（復習モードでは登録しない）
+            if (!this.gameState.isReviewMode) {
+                const levelConfig = gameRules.settings.levels[this.gameState.selectedLevel];
+                // 現在の選択肢を固定順序で保存（正解を含む4つの選択肢）
+                const currentChoices = Array.from(this.elements.choiceBtns).map(btn => btn.textContent);
+                this.reviewStore.add(
+                    this.currentQuestion, 
+                    currentChoices, 
+                    this.currentQuestion.japanese,
+                    { 
+                        level: this.gameState.selectedLevel, 
+                        type: 'wrong',
+                        questionType: levelConfig.type // 文字問題か音声問題かを保存
+                    }
+                );
+            }
         }
 
         // 音声問題の場合は中国語とピンインを表示
@@ -613,6 +657,9 @@ class ChineseVocabGame {
     }
     
     endLevel() {
+        // ゲームを非アクティブにする
+        this.gameState.isGameActive = false;
+        
         const score = this.gameState.correctAnswers;
         const percentage = Math.round((score / this.gameState.totalQuestions) * 100);
         
@@ -624,18 +671,30 @@ class ChineseVocabGame {
         this.elements.scorePercent.textContent = percentage;
         
         const level = this.gameState.selectedLevel;
-        const levelConfig = gameRules.settings.levels[level];
-        this.elements.resultTitle.textContent = `${levelConfig.name} 最終結果`;
+        if (this.gameState.isReviewMode) {
+            this.elements.resultTitle.textContent = '復習 最終結果';
+        } else {
+            const levelConfig = gameRules.settings.levels[level];
+            this.elements.resultTitle.textContent = `${levelConfig.name} 最終結果`;
+        }
         
         // ペアレベルボタンの表示制御
         this.setupPairLevelButton();
         
-        // 復習モードの場合は復習一覧ボタンを表示
+        // 復習モードの場合は復習一覧ボタンを表示し、もう一度ボタンのテキストを変更
         if (this.gameState.isReviewMode) {
             this.elements.backToReviewBtn.style.display = 'inline-block';
             this.elements.pairLevelBtn.style.display = 'none';
+            // もう一度ボタンのテキストを復習用に変更
+            if (this.elements.retryBtn) {
+                this.elements.retryBtn.textContent = '復習を再開';
+            }
         } else {
             this.elements.backToReviewBtn.style.display = 'none';
+            // もう一度ボタンのテキストを通常用に戻す
+            if (this.elements.retryBtn) {
+                this.elements.retryBtn.textContent = 'もう一度';
+            }
         }
         
         // 結果に応じたメッセージと画像表示
@@ -743,19 +802,45 @@ class ChineseVocabGame {
 
     
     retryLevel() {
-        // ===== 「もう一度」：同じ5問で再挑戦 =====
-        this.quizSession.attempt += 1;
-        this.gameState.currentQuestion = 0;
-        this.gameState.correctAnswers = 0;
-        this.gameState.isGameActive = true;
-        
-        // ★ポイント：新しい5問は作らない！保存済みをそのまま使う
-        this.gameState.questions = this.quizSession.questions;
-        
-        console.log(`再挑戦 ${this.quizSession.attempt}回目 - 固定画像番号: ${this.quizSession.imageIndex}`);
-        
-        this.showScreen('game');
-        this.loadQuestion();
+        if (this.gameState.isReviewMode) {
+            // ===== 復習モード：「もう一度」で同じ復習問題を再開始 =====
+            console.log('復習問題を再開始します');
+            
+            // 復習問題の状態をリセット
+            this.gameState.currentQuestion = 0;
+            this.gameState.correctAnswers = 0;
+            this.gameState.isGameActive = true;
+            
+            // 選択肢ボタンの状態をリセット
+            this.elements.choiceBtns.forEach(btn => {
+                btn.disabled = false;
+                btn.className = 'choice-btn';
+                btn.classList.remove('correct', 'incorrect', 'disabled');
+            });
+            
+            // フィードバックをリセット
+            this.resetFeedback();
+            
+            // 同じ復習問題セットを使用
+            // this.gameState.questions は既に設定済み
+            
+            this.showScreen('game');
+            this.loadQuestion();
+        } else {
+            // ===== 通常モード：「もう一度」で同じ5問で再挑戦 =====
+            this.quizSession.attempt += 1;
+            this.gameState.currentQuestion = 0;
+            this.gameState.correctAnswers = 0;
+            this.gameState.isGameActive = true;
+            
+            // ★ポイント：新しい5問は作らない！保存済みをそのまま使う
+            this.gameState.questions = this.quizSession.questions;
+            
+            console.log(`再挑戦 ${this.quizSession.attempt}回目 - 固定画像番号: ${this.quizSession.imageIndex}`);
+            
+            this.showScreen('game');
+            this.loadQuestion();
+        }
     }
     
     showLevelSelection() {
@@ -1010,14 +1095,20 @@ class ChineseVocabGame {
         }
 
         // 復習用の問題セットを作成
-        const reviewQuestions = reviewItems.map(item => ({
-            ...item.question,
-            japanese: item.answer,
-            reviewItem: item, // 元の復習アイテムを保持
-            questionType: item.meta.questionType // 元の問題タイプを保持
-        }));
+        const reviewQuestions = reviewItems.map(item => {
+            console.log('復習アイテム:', item);
+            return {
+                ...item.question,
+                japanese: item.answer,
+                reviewItem: item, // 元の復習アイテムを保持
+                questionType: item.meta.questionType // 元の問題タイプを保持
+            };
+        });
+        
+        console.log('復習問題セット:', reviewQuestions);
 
         this.gameState.isReviewMode = true;
+        this.gameState.isGameActive = true;  // ゲームをアクティブにする
         this.gameState.currentQuestion = 0;
         this.gameState.correctAnswers = 0;
         this.gameState.totalQuestions = reviewQuestions.length;
