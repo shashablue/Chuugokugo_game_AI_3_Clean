@@ -68,6 +68,11 @@
 
                 </div>
             </div>
+            
+            <!-- 復習ボタン -->
+            <div class="review-section">
+                <button id="review-btn" class="review-button">📚 復習</button>
+            </div>
         </div>
 
         <!-- ゲーム画面 -->
@@ -155,6 +160,32 @@
                     <button id="pair-level-btn" class="secondary-button" style="display: none;">ペアレベル</button>
                     <button id="other-level-btn" class="secondary-button">他のレベル</button>
                     <button id="home-btn" class="secondary-button">ホームに戻る</button>
+                    <button id="back-to-review-btn" class="secondary-button" style="display: none;">復習一覧へ戻る</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 復習画面 -->
+        <div id="review-screen" class="screen" style="display: none;">
+            <div class="review-content">
+                <h2>復習リスト</h2>
+                
+                <div class="review-controls">
+                    <button id="review-select-all-btn" class="review-control-btn">全選択</button>
+                    <button id="review-deselect-all-btn" class="review-control-btn">全解除</button>
+                    <button id="review-start-btn" class="review-start-btn">選んだ問題で復習開始</button>
+                </div>
+
+                <div id="review-empty-message" class="review-empty-message" style="display: none;">
+                    <p>復習対象はありません</p>
+                </div>
+
+                <ul id="review-list" class="review-list">
+                    <!-- 復習項目がここに動的に追加される -->
+                </ul>
+
+                <div class="review-actions">
+                    <button id="review-back-btn" class="secondary-button">戻る</button>
                 </div>
             </div>
         </div>

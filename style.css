@@ -981,3 +981,284 @@ body::before {
         font-size: 42px;
     }
 } 
+
+/* ===== 復習機能スタイル ===== */
+
+/* 復習ボタン */
+.review-section {
+    text-align: center;
+    margin-top: 30px;
+    padding: 20px;
+}
+
+.review-button {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 15px 30px;
+    background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+    border: 2px solid rgba(255, 107, 107, 0.3);
+    border-radius: 50px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.5px;
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.2);
+}
+
+.review-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(255, 107, 107, 0.3);
+    background: linear-gradient(135deg, #FF5252, #FF7676);
+}
+
+.review-button:active {
+    transform: translateY(0);
+    box-shadow: 0 6px 20px rgba(255, 107, 107, 0.2);
+}
+
+/* 復習画面 */
+.review-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    box-shadow: 0 20px 60px rgba(135, 206, 235, 0.15);
+}
+
+.review-content h2 {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+    font-size: 28px;
+    color: #2F4F4F;
+    text-align: center;
+    margin-bottom: 30px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* 復習コントロール */
+.review-controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.review-control-btn {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 20px;
+    background: #87CEEB;
+    border: 2px solid rgba(135, 206, 235, 0.3);
+    border-radius: 25px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.review-control-btn:hover {
+    background: #6495ED;
+    transform: translateY(-1px);
+}
+
+.review-start-btn {
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px 25px;
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    border: 2px solid rgba(76, 175, 80, 0.3);
+    border-radius: 25px;
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.2);
+}
+
+.review-start-btn:hover {
+    background: linear-gradient(135deg, #43A047, #5CB85C);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+}
+
+.review-start-btn:disabled {
+    background: #BDBDBD;
+    border-color: #BDBDBD;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* 復習リスト */
+.review-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 30px 0;
+    max-height: 400px;
+    overflow-y: auto;
+    border: 2px solid rgba(135, 206, 235, 0.2);
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.review-list li {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid rgba(135, 206, 235, 0.1);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 16px;
+    color: #2F4F4F;
+}
+
+.review-list li:last-child {
+    border-bottom: none;
+}
+
+.review-list li:hover {
+    background: rgba(135, 206, 235, 0.1);
+}
+
+.review-list li.selected {
+    background: rgba(76, 175, 80, 0.1);
+    border-left: 4px solid #4CAF50;
+}
+
+.review-list li input[type="checkbox"] {
+    margin-right: 15px;
+    transform: scale(1.2);
+    accent-color: #4CAF50;
+}
+
+/* 復習項目の内容 */
+.review-item-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.review-item-chinese {
+    font-size: 18px;
+    font-weight: 600;
+    color: #4682B4;
+}
+
+.review-item-pinyin {
+    font-size: 14px;
+    color: #708090;
+    font-style: italic;
+}
+
+.review-item-answer {
+    font-size: 14px;
+    color: #2F4F4F;
+    margin-top: 3px;
+}
+
+.review-item-type {
+    font-size: 12px;
+    color: #708090;
+    margin-top: 2px;
+    font-weight: 500;
+}
+
+/* 削除ボタン */
+.review-item-remove {
+    background: none;
+    border: none;
+    color: #FF6B6B;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    margin-left: 10px;
+}
+
+.review-item-remove:hover {
+    background: rgba(255, 107, 107, 0.1);
+    transform: scale(1.1);
+}
+
+/* 空メッセージ */
+.review-empty-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: #708090;
+    font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
+    font-size: 16px;
+}
+
+.review-empty-message p {
+    margin: 0;
+    font-style: italic;
+}
+
+/* 復習アクション */
+.review-actions {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* 復習モード表示 */
+.review-mode-indicator {
+    background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 10px;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .review-content {
+        padding: 20px 15px;
+        margin: 10px;
+    }
+    
+    .review-content h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+    
+    .review-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .review-control-btn,
+    .review-start-btn {
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .review-list {
+        max-height: 300px;
+    }
+    
+    .review-list li {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+    
+    .review-item-chinese {
+        font-size: 16px;
+    }
+    
+    .review-item-pinyin {
+        font-size: 12px;
+    }
+    
+    .review-item-answer {
+        font-size: 12px;
+    }
+} 
