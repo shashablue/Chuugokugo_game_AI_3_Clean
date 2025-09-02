@@ -175,10 +175,67 @@ class ChineseVocabGame {
         this.autoPlayTimeout = null;
         this.lastDisplayedImages = {};
         
+        // 音声合成の初期化と改善
+        this.initializeSpeechSynthesis();
+        
         // 音効果のための音声要素を作成
         this.initializeSounds();
         
         this.initializeGame();
+    }
+    
+    // 音声合成の初期化と改善
+    initializeSpeechSynthesis() {
+        if (!this.speechSynthesis) {
+            console.warn('音声合成がサポートされていません');
+            return;
+        }
+        
+        // 音声の準備が完了するまで待機
+        if (this.speechSynthesis.getVoices().length === 0) {
+            this.speechSynthesis.onvoiceschanged = () => {
+                this.setupChineseVoice();
+            };
+        } else {
+            this.setupChineseVoice();
+        }
+        
+        // スマートフォンでの音声合成の最適化
+        this.optimizeForMobile();
+    }
+    
+    // 中国語音声の設定
+    setupChineseVoice() {
+        const voices = this.speechSynthesis.getVoices();
+        console.log('利用可能な音声:', voices.map(v => `${v.name} (${v.lang})`));
+        
+        // 中国語音声の確認
+        const chineseVoices = voices.filter(voice => 
+            voice.lang.startsWith('zh') || 
+            voice.lang.startsWith('cmn')
+        );
+        
+        if (chineseVoices.length > 0) {
+            console.log('中国語音声が見つかりました:', chineseVoices.map(v => v.name));
+        } else {
+            console.log('中国語音声が見つかりません。フォールバックを使用します。');
+        }
+    }
+    
+    // スマートフォン最適化
+    optimizeForMobile() {
+        // タッチデバイスの検出
+        const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        if (isTouchDevice) {
+            console.log('タッチデバイスを検出しました。音声設定を最適化します。');
+            
+            // 音声合成の設定を調整
+            if (this.speechSynthesis.pause) {
+                // 音声の一時停止機能がある場合
+                this.speechSynthesis.pause();
+            }
+        }
     }
 
     // ===== 正答率→フォルダ対応 =====
@@ -416,10 +473,21 @@ class ChineseVocabGame {
         this.elements.audioQuestion.style.display = 'block';
         this.currentQuestion = question; // 音声再生用に保存
         
+        // 音声再生状態の表示を更新
+        this.updateAudioStatus('準備中...');
+        
         // 音声問題開始時に自動音声再生
         this.autoPlayTimeout = setTimeout(() => {
             this.playAudio();
-        }, 500); // 0.5秒後に自動再生
+        }, 800); // 0.8秒後に自動再生（少し長くして準備時間を確保）
+    }
+    
+    // 音声再生状態の表示更新
+    updateAudioStatus(status) {
+        const autoPlayIndicator = document.querySelector('.auto-play-indicator');
+        if (autoPlayIndicator) {
+            autoPlayIndicator.textContent = status;
+        }
     }
     
     generateChoices(question) {
@@ -644,14 +712,93 @@ class ChineseVocabGame {
         
         // 既存の音声を停止
         if (this.speechSynthesis.speaking) {
-            this.speechSynthesis.cancel();
+            this.speechSynthesis.crawl();
         }
         
-        // 中国語音声合成（中国語の文字を読み上げ）
-        const utterance = new SpeechSynthesisUtterance(this.currentQuestion.chinese);
-        utterance.lang = 'zh-CN';
-        utterance.rate = 0.8;
-        utterance.pitch = 1;
+        // 中国語音声合成の改善
+        this.playChineseAudio(this.currentQuestion.chinese);
+    }
+    
+    // 中国語音声再生の改善版
+    playChineseAudio(text) {
+        // 利用可能な音声を取得
+        const voices = this.speechSynthesis.getVoices();
+        
+        // 中国語音声を優先的に選択
+        let chineseVoice = voices.find(voice => 
+            voice.lang.startsWith('zh') || 
+            voice.lang.startsWith('cmn') ||
+            voice.name.toLowerCase().includes('chinese') ||
+            voice.name.toLowerCase().includes('mandarin')
+        );
+        
+        // 中国語音声が見つからない場合のフォールバック
+        if (!chineseVoice) {
+            // 日本語音声を避けて、英語音声を選択
+            chineseVoice = voices.find(voice => 
+                voice.lang.startsWith('en') && 
+                !voice.lang.startsWith('ja')
+            );
+        }
+        
+        // 音声合成の設定
+        const utterance = new SpeechSynthesisUtterance(text);
+        
+        if (chineseVoice) {
+            utterance.voice = chineseVoice;
+            utterance.lang = chineseVoice.lang;
+            console.log(`中国語音声を使用: ${chineseVoice.name} (${chineseVoice.lang})`);
+        } else {
+            // フォールバック: 中国語として設定
+            utterance.lang = 'zh-CN';
+            console.log('フォールバック音声を使用: zh-CN');
+        }
+        
+        // 音声品質の調整
+        utterance.rate = 0.7;  // 少し遅くして聞き取りやすく
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        
+        // 音声再生前の準備
+        utterance.onstart = () => {
+            console.log('中国語音声再生開始:', text);
+            this.updateAudioStatus('再生中... 🔊');
+        };
+        
+        utterance.onend = () => {
+            console.log('中国語音声再生完了:', text);
+            this.updateAudioStatus('再生完了');
+        };
+        
+        utterance.onerror = (event) => {
+            console.error('音声再生エラー:', event.error);
+            this.updateAudioStatus('エラー - ピンインで再生');
+            // エラー時のフォールバック: ピンインを読み上げ
+            this.playPinyinFallback(this.currentQuestion.pinyin);
+        };
+        
+        // 音声再生
+        this.speechSynthesis.speak(utterance);
+    }
+    
+    // ピンイン読み上げのフォールバック
+    playPinyinFallback(pinyin) {
+        if (!pinyin) return;
+        
+        const utterance = new SpeechSynthesisUtterance(pinyin);
+        utterance.lang = 'en-US';  // 英語として読み上げ（ピンインは英語読みが近い）
+        utterance.rate = 0.6;
+        utterance.pitch = 1.0;
+        
+        utterance.onstart = () => {
+            console.log('ピンイン音声再生開始:', pinyin);
+            this.updateAudioStatus('ピンイン再生中... 🔊');
+        };
+        
+        utterance.onend = () => {
+            console.log('ピンイン音声再生完了:', pinyin);
+            this.updateAudioStatus('ピンイン再生完了');
+        };
         
         this.speechSynthesis.speak(utterance);
     }
@@ -901,7 +1048,18 @@ class ChineseVocabGame {
         // 音声再生ボタン
         if (this.elements.playAudioBtn) {
             this.elements.playAudioBtn.addEventListener('click', () => {
+                // ボタンの状態を一時的に無効化
+                this.elements.playAudioBtn.disabled = true;
+                this.elements.playAudioBtn.textContent = '🔊 再生中...';
+                
+                // 音声再生
                 this.playAudio();
+                
+                // 1秒後にボタンを元に戻す
+                setTimeout(() => {
+                    this.elements.playAudioBtn.disabled = false;
+                    this.elements.playAudioBtn.textContent = '🔊 もう一度聞く';
+                }, 1000);
             });
         }
 
